@@ -9,12 +9,15 @@ import {
   TextComponent,
 } from '@/components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { authSelector, removeAuth } from '@/redux/reducers/authReducer';
 const HomeScreen = ({navigation}: any) => {
+  const dispatch = useDispatch();
   const handleLogout = async () => {
         await AsyncStorage.removeItem(
           'auth',
         );
-        navigation.navigate('LoginScreen')
+        dispatch(removeAuth({}))
   };
   return (
     <ContainerComponent isImageBackground isScroll>
@@ -25,7 +28,7 @@ const HomeScreen = ({navigation}: any) => {
             type="primary"
           />
         </SectionComponent>
-        <TextComponent text='HOme screen' />
+        <TextComponent text='Home page'></TextComponent>
     </ContainerComponent>
   );
 };
