@@ -16,6 +16,8 @@ import {Validate} from '@/utils/validate';
 import {useDispatch} from 'react-redux';
 import {addAuth} from '@/redux/reducers/authReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import userAPI from '@/services/userApi';
+
 
 const LoginScreen = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -44,12 +46,16 @@ const LoginScreen = ({navigation}: any) => {
           {email, password},
           'post',
         );
+
         dispatch(addAuth(res.data.valueReponse));
 
         await AsyncStorage.setItem(
           'auth',
           JSON.stringify(res.data.valueReponse),
         );
+        
+        
+
       } catch (error) {
         console.log(error);
       }

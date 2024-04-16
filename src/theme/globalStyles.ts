@@ -8,6 +8,11 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: appColors.white,
   },
 
+  container_list: {
+    flex: 1,
+    backgroundColor: appColors.gray2,
+  },
+
   text: {
     fontFamily: fontFamilies.regular,
     fontSize: 14,
@@ -67,5 +72,10 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: appColors.white,
     margin: 12,
+  },
+  list: {
+    padding: 12,
+    marginTop: 15,
+    backgroundColor: appColors.white,
   },
 });

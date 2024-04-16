@@ -2,10 +2,16 @@ import {createSlice} from '@reduxjs/toolkit';
 
 interface AuthState {
   token: string;
+  id: number;
+  name: string;
+  email: string;
 }
 
 const initialState: AuthState = {
   token: '',
+  id:0,
+  name: '',
+  email: '',
 };
 
 const authSlice = createSlice({

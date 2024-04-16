@@ -1,17 +1,19 @@
 import axiosClient from '@/utils/axiosClient';
 
-class UserAPI {
-  HandleUser = async (
+class DefaultAPI {
+  HandleAPI = async (
     url: string,
     data?: any,
     method?: 'get' | 'post' | 'put' | 'delete',
+    params?: any,
   ) => {
-    return await axiosClient(`/api${url}`, {
+    return await axiosClient(`${url}`, {
       method: method ?? 'get',
       data,
+      params,
     });
   };
 }
 
-const userAPI = new UserAPI();
-export default userAPI;
+const defaultAPI = new DefaultAPI();
+export default defaultAPI;

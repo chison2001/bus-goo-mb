@@ -1,6 +1,7 @@
 import axios from 'axios';
 import queryString from 'query-string';
 import {appInfo} from '../constants/appInfos';
+import store from '@/redux/store'
 
 const axiosClient = axios.create({
   baseURL: appInfo.BASE_URL,
@@ -8,8 +9,12 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(async (config: any) => {
+  const currentState = store.getState();
+
+  const token = currentState.authReducer.authData.token;
+
   config.headers = {
-    Authorization: '',
+    Authorization: token ? `Bearer ${token}` : '',
     Accept: 'application/json',
     ...config.headers,
   };
