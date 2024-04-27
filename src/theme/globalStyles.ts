@@ -4,13 +4,13 @@ import {fontFamilies} from '../constants/fontFamilies';
 
 export const globalStyles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.9,
     backgroundColor: appColors.white,
   },
 
   container_list: {
-    flex: 1,
-    backgroundColor: appColors.gray2,
+    flex: 0.92,
+    backgroundColor: appColors.gray3,
   },
 
   text: {
@@ -75,7 +75,9 @@ export const globalStyles = StyleSheet.create({
   },
   list: {
     padding: 12,
-    marginTop: 15,
     backgroundColor: appColors.white,
+    borderRadius: 10,
+    marginTop:20,
+    marginHorizontal: 20
   },
 });

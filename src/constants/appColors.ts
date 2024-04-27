@@ -11,5 +11,6 @@ export const appColors = {
   link: '#5669FF',
   danger: '#e74c3c',
   orange: '#FFA500',
-  green: '#008000'
+  green: '#008000',
+  yellow: '#FFD700',
 };

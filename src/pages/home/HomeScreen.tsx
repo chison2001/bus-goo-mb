@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  ButtonComponent,
-  ContainerComponent,
-  InputComponent,
-  RowComponent,
-  SectionComponent,
-  SpaceComponent,
-  TextComponent,
-} from "@/components";
-import { Button, Platform, StatusBar, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch, useSelector } from "react-redux";
-import { authSelector, removeAuth } from "@/redux/reducers/authReducer";
+import { ButtonComponent, RowComponent, TextComponent } from "@/components";
+import { Platform, StatusBar, View, StyleSheet, Text } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import defaultAPI from "@/services/defaultApi";
 import { globalStyles } from "@/theme/globalStyles";
@@ -19,17 +8,27 @@ import { appColors } from "@/constants/appColors";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import Swiper from "react-native-swiper";
 
 interface Region {
   label: string;
   value: number;
+}
+interface Promotion {
+  promotionDetailId: number;
+  promotionCode: string;
+  promotionLineName: string;
+  promotionType: number;
+  discount: number;
+  conditionApply: number;
+  maxDiscount: number;
 }
 
 const HomeScreen = ({ navigation }: any) => {
   const [selectedFrom, setSelectedFrom] = useState();
   const [selectedTo, setSelectedTo] = useState();
   const [selectedDate, setSelectedDate] = useState();
-  const dispatch = useDispatch();
+  const [promotions, setPromotions] = useState([] as Promotion[]);
   const [cities, setCities] = useState([]);
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
@@ -72,76 +71,112 @@ const HomeScreen = ({ navigation }: any) => {
       date: formatDate(date, 2),
     });
   };
+  async function getRegion() {
+    const res = await defaultAPI.HandleAPI(
+      "/api/region/find",
+      {
+        parentId: null,
+        regionStructureId: 1,
+      },
+      "post"
+    );
+
+    const data = res.data.valueReponse.data;
+    const cityItems = data.map((item: { fullName: any; id: any }) => ({
+      label: item.fullName,
+      value: item.id,
+    }));
+    setCities(cityItems);
+  }
+  async function getPromotion() {
+    const res = await defaultAPI.HandleAPI(
+      "/api/promotion/get-current-promotion",
+      {},
+      "get",
+      {}
+    );
+
+    const data = res.data.valueReponse.data;
+    setPromotions(data);
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await defaultAPI.HandleAPI(
-          "/api/region/find",
-          {
-            parentId: null,
-            regionStructureId: 1,
-          },
-          "post"
-        );
-
-        const data = res.data.valueReponse.data;
-        const cityItems = data.map((item: { fullName: any; id: any }) => ({
-          label: item.fullName,
-          value: item.id,
-        }));
-        setCities(cityItems);
+        await getRegion();
+        await getPromotion();
       } catch (error) {
         console.error("Error fetching cities:", error);
       }
     };
     fetchData();
   }, []);
+  function formatPrice(value: number) {
+    return `${value.toLocaleString("vi-VN")} VNĐ`;
+  }
   return (
     <View style={[globalStyles.container]}>
       <View
         style={{
-          backgroundColor: appColors.orange,
-          height: 318 + (Platform.OS === "ios" ? 16 : 0),
-          borderBottomLeftRadius: 40,
-          borderBottomRightRadius: 40,
+          backgroundColor: appColors.white2,
+          borderColor: appColors.orange,
+          borderWidth: 2,
+          height: 288 + (Platform.OS === "ios" ? 16 : 0),
+          borderRadius: 20,
           paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 52,
+          marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 15,
           paddingHorizontal: 16,
+          marginHorizontal: 8,
         }}
       >
-        <TextComponent text="Chọn điểm khởi hành" />
-        <Picker
-          selectedValue={selectedFrom}
-          onValueChange={(itemValue, itemIndex) => setSelectedFrom(itemValue)}
+        <RowComponent
+          styles={{
+            justifyContent: "space-between",
+          }}
         >
-          {cities.map((item: Region, index) => (
-            <Picker.Item key={index} label={item.label} value={item.value} />
-          ))}
-        </Picker>
-        <TextComponent text="Chọn điểm đến" />
-        <Picker
-          selectedValue={selectedTo}
-          onValueChange={(itemValue, itemIndex) => setSelectedTo(itemValue)}
-        >
-          {cities.map((item: Region, index) => (
-            <Picker.Item key={index} label={item.label} value={item.value} />
-          ))}
-        </Picker>
-        <TextComponent text="Chọn ngày khởi hành" />
+          <TextComponent text="Điểm khởi hành" />
+          <Picker
+            selectedValue={selectedFrom}
+            onValueChange={(itemValue, itemIndex) => setSelectedFrom(itemValue)}
+            style={{ width: "70%" }}
+          >
+            {cities.map((item: Region, index) => (
+              <Picker.Item key={index} label={item.label} value={item.value} />
+            ))}
+          </Picker>
+        </RowComponent>
 
-        <View style={{ alignItems: "center", paddingBottom: 10 }}>
-          <RowComponent>
-            <TextComponent
-              size={20}
-              text={formatDate(date, 1)}
-              styles={{ marginRight: 5 }}
-            />
-            <Button
-              onPress={showDatepicker}
-              title="Chọn ngày"
-              color={appColors.primary}
-            />
-          </RowComponent>
-        </View>
+        <RowComponent
+          styles={{
+            justifyContent: "space-between",
+          }}
+        >
+          <TextComponent text="Điểm đến" />
+          <Picker
+            selectedValue={selectedTo}
+            onValueChange={(itemValue, itemIndex) => setSelectedTo(itemValue)}
+            style={{ width: "70%" }}
+          >
+            {cities.map((item: Region, index) => (
+              <Picker.Item key={index} label={item.label} value={item.value} />
+            ))}
+          </Picker>
+        </RowComponent>
+
+        <RowComponent
+          styles={{
+            justifyContent: "space-between",
+            paddingBottom: 20,
+            marginTop: 10,
+          }}
+        >
+          <TextComponent text="Chọn ngày khởi hành" />
+          <Text
+            style={{ marginRight: 5, fontSize: 20 }}
+            onPress={showDatepicker}
+          >
+            {formatDate(date, 1)}
+          </Text>
+        </RowComponent>
 
         <ButtonComponent
           onPress={handleNavigate}
@@ -161,8 +196,76 @@ const HomeScreen = ({ navigation }: any) => {
           />
         )}
       </View>
+
+      <View
+        style={{
+          flex: 0.4,
+          margin: 20,
+          backgroundColor: appColors.orange,
+          borderRadius: 10,
+        }}
+      >
+        <Swiper autoplay>
+          {promotions.map((promotion, index) => (
+            <View key={index} style={styles.slide}>
+              <RowComponent>
+                <TextComponent
+                  styles={styles.promotionLineName}
+                  text={promotion.promotionLineName}
+                  title
+                />
+              </RowComponent>
+              <RowComponent>
+                <TextComponent
+                  text={
+                    promotion.promotionType === 1
+                      ? `Giảm giá: ${promotion.discount.toLocaleString()} vnd`
+                      : `Chiết khấu: ${promotion.discount}%`
+                  }
+                />
+              </RowComponent>
+              <RowComponent>
+                {promotion.conditionApply && (
+                  <TextComponent
+                    text={`Áp dụng cho đơn hàng từ: ${formatPrice(
+                      promotion.conditionApply
+                    )}`}
+                  />
+                )}
+                {promotion.maxDiscount && (
+                  <TextComponent
+                    text={`Giảm tối đa: ${formatPrice(
+                      promotion.maxDiscount
+                    )} %`}
+                  />
+                )}
+              </RowComponent>
+            </View>
+          ))}
+        </Swiper>
+      </View>
     </View>
   );
 };
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  wrapper: {},
+  slide: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 15,
+  },
+  promotionCode: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  promotionLineName: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  // Add more styles if needed
+});
 
 export default HomeScreen;

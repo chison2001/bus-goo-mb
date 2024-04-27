@@ -155,6 +155,9 @@ const SelectSeatScreen = ({ route, navigation }: any) => {
 
   const seatsToDisplay =
     selectedDeck === "lower" ? seatsLowerDeck : seatsUpperDeck;
+  function formatPrice(value: number) {
+    return `${value.toLocaleString("vi-VN")} VNĐ`;
+  }
   return (
     <View style={globalStyles.container}>
       {loading && (
@@ -188,7 +191,25 @@ const SelectSeatScreen = ({ route, navigation }: any) => {
             keyExtractor={(item) => item.seatName}
             numColumns={3}
             contentContainerStyle={styles.list}
+            scrollEnabled
           />
+          <View style={styles.caculate}>
+            <RowComponent
+              styles={{ justifyContent: "space-between", marginBottom: 10 }}
+            >
+              <TextComponent text="Các ghế đã chọn:" />
+              <TextComponent text={selectedSeats.join(", ")} />
+            </RowComponent>
+            <RowComponent styles={{ justifyContent: "space-between" }}>
+              <TextComponent text="Tổng tiền:" />
+              {ticket && (
+                <TextComponent
+                  size={20}
+                  text={formatPrice(selectedSeats.length * ticket.priceValue)}
+                />
+              )}
+            </RowComponent>
+          </View>
           <View style={styles.buttomSubmit}>
             <ButtonComponent
               text="Đặt vé"
@@ -206,7 +227,7 @@ const styles = StyleSheet.create({
   segment: {
     marginHorizontal: 40,
     alignItems: "center",
-    flex: 0.15,
+    flex: 0.25,
   },
   seat: {
     height: 60,
@@ -217,11 +238,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   list: {
-    justifyContent: "space-between",
-    flex: 0.9,
+    justifyContent: "space-evenly",
+    flex: 1,
   },
   buttomSubmit: {
+    marginTop: 20,
     flex: 0.2,
+    marginBottom: 80,
+  },
+  caculate: {
+    backgroundColor: appColors.gray2,
+    marginHorizontal: 30,
+    padding: 20,
+    borderRadius: 10,
   },
 });
 

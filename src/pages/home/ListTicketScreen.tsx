@@ -88,16 +88,16 @@ const ListTicketScreen = ({ route, navigation }: any) => {
       }}
     >
       <RowComponent>
-        <TextComponent text={formatToTime(item.timeStated)} size={24} />
-        <Icon name="record-circle" color={appColors.orange} size={20} />
-        <Divider horizontalInset style={{ height: 2, width: 50 }} />
+        <TextComponent text={formatToTime(item.timeStated)} size={22} />
+        <Icon name="record-circle" color={appColors.green} size={18} />
+        <Divider horizontalInset style={{ height: 2, width: 40 }} />
         <View style={{ alignItems: "center" }}>
           <TextComponent text={formatTime(item.transferTime)} size={22} />
           <TextComponent text="(dự kiến)" />
         </View>
-        <Divider horizontalInset style={{ height: 2, width: 50 }} />
-        <Icon name="map-marker" color={appColors.orange} size={20} />
-        <TextComponent text={formatToTime(item.endTime)} size={24} />
+        <Divider horizontalInset style={{ height: 2, width: 40 }} />
+        <Icon name="map-marker" color={appColors.orange} size={18} />
+        <TextComponent text={formatToTime(item.endTime)} size={22} />
       </RowComponent>
       <RowComponent styles={{ justifyContent: "space-between" }}>
         <TextComponent text={item.fromName} title size={14} />

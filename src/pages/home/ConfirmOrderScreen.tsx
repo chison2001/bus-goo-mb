@@ -25,11 +25,12 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
   const { routeName, from, to, time, price, selectedSeats, listSeatOrder } =
     route.params;
   const arraySeat: string[] = Object.values(selectedSeats);
-  const [pickUps, setPickUps] = useState([]);
-  const [dropOffs, setDropOffs] = useState([]);
-  const [pickUpPoint, setPickUpPoint] = useState();
-  const [dropOffPoint, setDropOffPoint] = useState();
+  const [pickUps, setPickUps] = useState([] as Region[]);
+  const [dropOffs, setDropOffs] = useState([] as Region[]);
+  const [pickUpPoint, setPickUpPoint] = useState<number>();
+  const [dropOffPoint, setDropOffPoint] = useState<number>();
   const [discount, setDiscount] = useState<number>();
+  const [user, setUser] = useState();
   const auth = useSelector(authSelector);
 
   function formatDateString(dateString: string) {
@@ -52,12 +53,19 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
 
     const data = res.data.valueReponse.data;
 
-    setPickUps(
-      data.map((item: { name: any; id: any }) => ({
+    const formattedData: Region[] = data.map(
+      (item: { name: any; id: any }) => ({
         label: item.name,
         value: item.id,
-      }))
+      })
     );
+
+    setPickUps(formattedData);
+
+    // Thiết lập giá trị mặc định cho pickUpPoint
+    if (formattedData.length > 0) {
+      setPickUpPoint(formattedData[0].value);
+    }
   }
   async function getDropOffs() {
     const res = await defaultAPI.HandleAPI("/api/station/get", {}, "get", {
@@ -66,12 +74,21 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
 
     const data = res.data.valueReponse.data;
 
-    setDropOffs(
-      data.map((item: { name: any; id: any }) => ({
+    const formattedData: Region[] = data.map(
+      (item: { name: any; id: any }) => ({
         label: item.name,
         value: item.id,
-      }))
+      })
     );
+
+    setDropOffs(formattedData);
+
+    console.log(formattedData[0].value);
+
+    // Thiết lập giá trị mặc định cho dropOffPoint
+    if (formattedData.length > 0) {
+      setDropOffPoint(formattedData[0].value);
+    }
   }
   async function getPromotion() {
     const res = await defaultAPI.HandleAPI(
@@ -93,12 +110,21 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
       else setDiscount(temp);
     }
   }
+  async function getUser() {
+    const res = await defaultAPI.HandleAPI("/api/user/get", {}, "get", {
+      userId: auth.id,
+    });
+
+    const data = res.data.valueReponse.data;
+    setUser(data);
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
         await getPickUps();
         await getDropOffs();
         await getPromotion();
+        await getUser();
         setLoading(false);
       } catch (error) {
         console.error("Error fetching cities:", error);
@@ -166,6 +192,20 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
       )}
       {!loading && (
         <View>
+          <TextComponent text="Thông tin của bạn" title />
+          <RowComponent styles={styles.row}>
+            <TextComponent text="Họ và tên: " />
+            <TextComponent text={auth.name} />
+          </RowComponent>
+          <RowComponent styles={styles.row}>
+            <TextComponent text="Email: " />
+            <TextComponent text={auth.email} />
+          </RowComponent>
+          <RowComponent styles={styles.row}>
+            <TextComponent text="Số điện thoại: " />
+            {user && <TextComponent text={user.phone} />}
+          </RowComponent>
+          <Divider style={{ height: 1, width: "100%", marginVertical: 10 }} />
           <TextComponent text="Thông tin vé xe" title />
           <RowComponent styles={styles.row}>
             <TextComponent text="Tuyến xe: " />
@@ -201,7 +241,7 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
           </RowComponent>
           <Divider style={{ height: 1, width: "100%", marginVertical: 10 }} />
           <TextComponent text="Thông tin đón trả" title />
-          <View style={{ marginTop: 30 }}>
+          <View style={{ marginTop: 15 }}>
             <TextComponent text="Bến đi" />
             <Picker
               selectedValue={pickUpPoint}
@@ -244,11 +284,11 @@ const ConfirmOrderScreen = ({ route, navigation }: any) => {
 
 const styles = StyleSheet.create({
   row: {
-    marginTop: 20,
+    marginTop: 15,
     justifyContent: "space-between",
   },
   buttomSubmit: {
-    marginTop: 30,
+    marginTop: 10,
   },
 });
 

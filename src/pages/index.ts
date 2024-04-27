@@ -8,10 +8,11 @@ import SelectSeatScreen from './home/SelectSeatScreen';
 import ConfirmOrderScreen from './home/ConfirmOrderScreen';
 import VNPAYScreen from './home/VNPAYScreen';
 import VerifyPaymentScreen from './home/VerifyPaymentScreen';
-import OrderList from './home/OrderList';
-import OrderViewScreen from './home/OrderViewScreen';
-import InvoiceListScreen from './home/InvoiceListScreen';
-import InvoiceViewScreen from './home/InvoiceViewScreen';
+import OrderList from './order/OrderList';
+import OrderViewScreen from './order/OrderViewScreen';
+import InvoiceListScreen from './invoice/InvoiceListScreen';
+import InvoiceViewScreen from './invoice/InvoiceViewScreen';
+import ProfileScreen from './setting/ProfileScreen';
 export {
   LoginScreen,
   SplashScreen,
@@ -25,5 +26,6 @@ export {
   VerifyPaymentScreen,
   OrderViewScreen,
   InvoiceListScreen,
-  InvoiceViewScreen
+  InvoiceViewScreen,
+  ProfileScreen
 };

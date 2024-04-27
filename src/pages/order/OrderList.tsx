@@ -5,12 +5,14 @@ import { authSelector } from "@/redux/reducers/authReducer";
 import defaultAPI from "@/services/defaultApi";
 import { appColors } from "@/constants/appColors";
 import { globalStyles } from "@/theme/globalStyles";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Divider } from "react-native-paper";
 
 type order = {
   id: number;
@@ -49,36 +51,65 @@ const OrderList = ({ navigation }: any) => {
   function formatPrice(value: number) {
     return `${value.toLocaleString("vi-VN")} VNĐ`;
   }
+  function formatDate(dateFormat: string) {
+    const date = new Date(dateFormat);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${day.toString().padStart(2, "0")}-${month
+      .toString()
+      .padStart(2, "0")}-${year}`;
+  }
+
   const renderItem = ({ item }: { item: order }) => (
     <TouchableOpacity
-      style={{ backgroundColor: appColors.white, margin: 5, padding: 10 }}
+      style={{
+        backgroundColor: appColors.white,
+        marginHorizontal: 15,
+        marginTop: 15,
+        borderRadius: 10,
+        flexDirection: "row",
+      }}
       onPress={() => {
         navigation.navigate("Xem chi tiết đơn hàng", { id: item.id });
       }}
     >
-      <View style={{ alignItems: "flex-start" }}>
-        <RowComponent>
-          <TextComponent text="Đơn hàng #" title />
-          <TextComponent text={item.code} title />
-        </RowComponent>
-        <RowComponent>
-          <TextComponent text="Trạng thái thanh toán: " />
-          {item.isPay == 0 && (
-            <TextComponent text="chưa thanh toán" color={appColors.danger} />
-          )}
-          {item.isPay == 1 && (
-            <TextComponent text="đã thanh toán" color={appColors.green} />
-          )}
-        </RowComponent>
-        <RowComponent>
-          <TextComponent text="Ngày đặt: " />
-          <TextComponent text={item.createDate} />
+      <View
+        style={{
+          flex: 4,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 10,
+        }}
+      >
+        <TextComponent text="Ngày đặt" />
+        <TextComponent text={formatDate(item.createDate)} size={18} />
+        {item.isPay == 0 && (
+          <TextComponent text="chưa thanh toán" color={appColors.danger} />
+        )}
+        {item.isPay == 1 && (
+          <TextComponent text="đã thanh toán" color={appColors.green} />
+        )}
+      </View>
+      <Divider style={{ height: "100%", width: 1, marginHorizontal: 10 }} />
+      <View
+        style={{
+          flex: 6,
+          justifyContent: "center",
+          alignItems: "flex-start",
+          padding: 10,
+        }}
+      >
+        <RowComponent styles={{ paddingBottom: 5 }}>
+          <TextComponent text="Code: " />
+          <TextComponent text={item.code} />
         </RowComponent>
         <RowComponent>
           <TextComponent text="Tổng tiền: " />
           <TextComponent
             text={formatPrice(item.total)}
             color={appColors.danger}
+            size={20}
           />
         </RowComponent>
       </View>
