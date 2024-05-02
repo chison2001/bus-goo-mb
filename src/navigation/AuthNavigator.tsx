@@ -1,6 +1,6 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
-import { LoginScreen, SignUpScreen } from '@/pages';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import { LoginScreen, SignUpScreen, Verification } from "@/pages";
 
 const AuthNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -22,9 +22,11 @@ const AuthNavigator = () => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+      <Stack.Screen name="VerifyScreen" component={Verification} />
     </Stack.Navigator>
   );
 };

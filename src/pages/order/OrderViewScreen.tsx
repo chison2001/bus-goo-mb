@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RowComponent, TextComponent } from "@/components";
+import { ButtonComponent, RowComponent, TextComponent } from "@/components";
 import defaultAPI from "@/services/defaultApi";
 import { appColors } from "@/constants/appColors";
 import { globalStyles } from "@/theme/globalStyles";
@@ -29,6 +29,7 @@ const OrderViewScreen = ({ route, navigation }: any) => {
   const [order, setOrder] = useState<order>();
   const [listSeat, setListSeat] = useState<string[]>();
   const [loading, setLoading] = useState(true);
+  const [isDisable, setIsDisable] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -37,6 +38,7 @@ const OrderViewScreen = ({ route, navigation }: any) => {
         });
         const fetchedOrder = res.data.valueReponse.data;
         setOrder(fetchedOrder);
+        if (fetchedOrder.isPay === 0) setIsDisable(false);
         setListSeat(
           fetchedOrder.orderDetails.map(
             (detail: { seatName: string }) => detail.seatName
@@ -51,9 +53,28 @@ const OrderViewScreen = ({ route, navigation }: any) => {
 
     fetchData();
   }, []);
+  async function Payment() {
+    try {
+      const res = await defaultAPI.HandleAPI("/payment", {}, "get", {
+        orderId: id,
+        paymentType: "VNPAY",
+      });
+      const { respType, responseMsg, valueReponse } = res.data;
+      if (respType === 200) {
+        navigation.navigate("VNPAY", {
+          url: valueReponse.paymentUrl,
+        });
+      } else {
+        console.error(responseMsg);
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    }
+  }
   function formatPrice(value: number) {
     return `${value.toLocaleString("vi-VN")} VNĐ`;
   }
+
   return (
     <View style={[globalStyles.container, { padding: 20 }]}>
       {loading && (
@@ -98,6 +119,14 @@ const OrderViewScreen = ({ route, navigation }: any) => {
           <RowComponent styles={styles.row}>
             <TextComponent text="Thành tiền: " />
             <TextComponent text={formatPrice(order.total)} />
+          </RowComponent>
+          <RowComponent styles={styles.buttomSubmit}>
+            <ButtonComponent
+              disable={isDisable}
+              text="Thanh toán"
+              type="primary"
+              onPress={Payment}
+            />
           </RowComponent>
         </View>
       )}

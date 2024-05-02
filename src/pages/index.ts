@@ -13,6 +13,7 @@ import OrderViewScreen from './order/OrderViewScreen';
 import InvoiceListScreen from './invoice/InvoiceListScreen';
 import InvoiceViewScreen from './invoice/InvoiceViewScreen';
 import ProfileScreen from './setting/ProfileScreen';
+import Verification from './auth/VerifyScreen';
 export {
   LoginScreen,
   SplashScreen,
@@ -27,5 +28,6 @@ export {
   OrderViewScreen,
   InvoiceListScreen,
   InvoiceViewScreen,
-  ProfileScreen
+  ProfileScreen,
+  Verification
 };

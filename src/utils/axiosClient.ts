@@ -2,6 +2,7 @@ import axios from 'axios';
 import queryString from 'query-string';
 import {appInfo} from '../constants/appInfos';
 import store from '@/redux/store'
+import { Alert } from 'react-native';
 
 const axiosClient = axios.create({
   baseURL: appInfo.BASE_URL,
@@ -15,7 +16,7 @@ axiosClient.interceptors.request.use(async (config: any) => {
 
   config.headers = {
     Authorization: token ? `Bearer ${token}` : '',
-    Accept: 'application/json',
+    
     ...config.headers,
   };
 
@@ -29,7 +30,8 @@ axiosClient.interceptors.response.use(
     if (res.data.valueReponse !== '' && res.data.respType === 200) {
       return res;
     }
-    throw new Error('Error');
+    Alert.alert("Lỗi", res.data.responseMsg)
+    throw new Error(res.data.responseType + ": " + res.data.responseMsg);
   },
   error => {
     console.log(`Error api ${JSON.stringify(error)}`);

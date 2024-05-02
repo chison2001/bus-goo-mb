@@ -1,7 +1,7 @@
-import {Lock, Sms} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
-import {Alert, Image, Switch} from 'react-native';
-import authenticationAPI from '@/services/authApi';
+import { Lock, Sms } from "iconsax-react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Image, Switch } from "react-native";
+import authenticationAPI from "@/services/authApi";
 import {
   ButtonComponent,
   ContainerComponent,
@@ -10,20 +10,20 @@ import {
   SectionComponent,
   SpaceComponent,
   TextComponent,
-} from '@/components';
-import {appColors} from '@/constants/appColors';
-import {Validate} from '@/utils/validate';
-import {useDispatch} from 'react-redux';
-import {addAuth} from '@/redux/reducers/authReducer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import userAPI from '@/services/userApi';
+} from "@/components";
+import { appColors } from "@/constants/appColors";
+import { Validate } from "@/utils/validate";
+import { useDispatch } from "react-redux";
+import { addAuth } from "@/redux/reducers/authReducer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import userAPI from "@/services/userApi";
 
-
-const LoginScreen = ({navigation}: any) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginScreen = ({ navigation }: any) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isRemember, setIsRemember] = useState(true);
   const [isDisable, setIsDisable] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const dispatch = useDispatch();
 
@@ -42,25 +42,23 @@ const LoginScreen = ({navigation}: any) => {
     if (emailValidation) {
       try {
         const res = await authenticationAPI.HandleAuthentication(
-          '/login',
-          {email, password},
-          'post',
+          "/login",
+          { email, password },
+          "post"
         );
+        const { respType, responseMsg, valueReponse } = res.data;
 
         dispatch(addAuth(res.data.valueReponse));
 
         await AsyncStorage.setItem(
-          'auth',
-          JSON.stringify(res.data.valueReponse),
+          "auth",
+          JSON.stringify(res.data.valueReponse)
         );
-        
-        
-
       } catch (error) {
         console.log(error);
       }
     } else {
-      Alert.alert('Email không đúng định dạng!!!!');
+      Alert.alert("Lỗi", "Email không đúng định dạng!!!!");
     }
   };
 
@@ -68,12 +66,13 @@ const LoginScreen = ({navigation}: any) => {
     <ContainerComponent isImageBackground isScroll>
       <SectionComponent
         styles={{
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: "center",
+          alignItems: "center",
           marginTop: 25,
-        }}>
+        }}
+      >
         <Image
-          source={require('@/assets/images/thumnail.png')}
+          source={require("@/assets/images/thumnail.png")}
           style={{
             width: 162,
             height: 114,
@@ -87,18 +86,18 @@ const LoginScreen = ({navigation}: any) => {
         <InputComponent
           value={email}
           placeholder="Email"
-          onChange={val => setEmail(val)}
+          onChange={(val) => setEmail(val)}
           allowClear
           affix={<Sms size={22} color={appColors.gray} />}
         />
         <InputComponent
           value={password}
           placeholder="Password"
-          onChange={val => setPassword(val)}
+          onChange={(val) => setPassword(val)}
           isPassword
           allowClear
           affix={<Lock size={22} color={appColors.gray} />}
-        />    
+        />
       </SectionComponent>
       <SpaceComponent height={6} />
       <SectionComponent>
@@ -108,14 +107,35 @@ const LoginScreen = ({navigation}: any) => {
           text="ĐĂNG NHẬP"
           type="primary"
         />
+        {errorMessage ? (
+          <TextComponent
+            styles={{ color: "red", marginTop: 20 }}
+            text={errorMessage}
+          />
+        ) : null}
       </SectionComponent>
+
       <SectionComponent>
         <RowComponent justify="center">
           <TextComponent text="Chưa có tài khoản? " />
           <ButtonComponent
             type="link"
             text="Đăng kí"
-            onPress={() => navigation.navigate('SignUpScreen')}
+            onPress={() => navigation.navigate("SignUpScreen")}
+          />
+        </RowComponent>
+      </SectionComponent>
+      <SectionComponent>
+        <RowComponent justify="center">
+          <TextComponent text="Email chưa được kích hoạt?" />
+          <ButtonComponent
+            type="link"
+            text="Xác minh"
+            onPress={() =>
+              navigation.navigate("VerifyScreen", {
+                email: email,
+              })
+            }
           />
         </RowComponent>
       </SectionComponent>
